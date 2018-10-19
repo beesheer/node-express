@@ -59,6 +59,7 @@ const dishSchema = new Schema({
     timestamps: true
 });
 
+// This will create a collection 'dishes' in whatever db the connection connects to.
 var Dishes = mongoose.model('Dish', dishSchema);
 
 module.exports = Dishes;
