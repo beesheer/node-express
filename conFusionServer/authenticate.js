@@ -46,6 +46,7 @@ exports.verifyAdmin = (req, res, next) => {
         next();
     } else {
         const err = new Error('Only admin is allowed.');
+        err.status = 403;
         next(err);
     }    
 };

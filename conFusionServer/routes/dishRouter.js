@@ -183,6 +183,13 @@ dishRouter.route('/:dishId/comments/:commentId')
     Dishes.findById(req.params.dishId)
     .then((dish) => {
         if (dish != null && dish.comments.id(req.params.commentId) != null) {
+            // Only the same user
+            if (!dish.comments.id(req.params.commentId).author.equals(req.user._id)) {
+                err = new Error('You are not allowed to modify comment that does not belong to you');
+                err.status = 403;
+                return next(err);
+            }
+
             if (req.body.rating) {
                 dish.comments.id(req.params.commentId).rating = req.body.rating;
             }
@@ -218,6 +225,13 @@ dishRouter.route('/:dishId/comments/:commentId')
     .then((dish) => {
         if (dish != null && dish.comments.id(req.params.commentId) != null) {
 
+            // Only the same user
+            if (!dish.comments.id(req.params.commentId).author.equals(req.user._id)) {
+                err = new Error('You are not allowed to modify comment that does not belong to you');
+                err.status = 403;
+                return next(err);
+            }
+            
             dish.comments.id(req.params.commentId).remove();
             dish.save()
             .then((dish) => {
