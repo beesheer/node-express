@@ -32,7 +32,7 @@ router.post('/signup', (req, res, next) => {
   .catch((err) => next(err));
 });
 
-router.post('/login', (req, res, next) => {
+router.get('/login', (req, res, next) => {
 
   if(!req.session.user) {
     var authHeader = req.headers.authorization;
