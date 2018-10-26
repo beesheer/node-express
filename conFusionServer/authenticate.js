@@ -36,4 +36,7 @@ exports.jwtPassport = passport.use(new JwtStrategy(opts,
         });
     }));
 
+// With this, you need to pass in Authorization header,
+// with bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YmQzNzkyNDA4YWM4OTA3OThkMzY4Y2YiLCJpYXQiOjE1NDA1ODc4ODcsImV4cCI6MTU0MDU5MTQ4N30.fjvsWs2fk2Sw8rBVJB2huiSrRdmcl_lUBZ3kTBJW2jo
+// ExtractJwt.fromAuthHeaderAsBearerToken();
 exports.verifyUser = passport.authenticate('jwt', {session: false});
