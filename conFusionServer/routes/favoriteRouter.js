@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const Favorites = require('../models/favorites');
+const Favorites = require('../models/favorite');
 var authenticate = require('../authenticate');
 const favoriteRouter = express.Router();
 
@@ -23,14 +23,31 @@ favoriteRouter.route('/')
     Favorites.findOne({user: req.user._id})
     .then((favorite) => {
         // Create one if needed
-        if (favorite != null) {
+        if (favorite == null) {
             // create a list of favorite dishes for a user
             return Favorites.create({
                 user: req.user._id,
                 dishes: req.body
             });            
         } else {
-            favorite.dishes = favorite.dishes.concat(req.body);
+            let uniqueArray = []
+            for (let i = 0; i<favorite.dishes.length; i++) {
+                if (uniqueArray.indexOf(favorite.dishes[i]._id.toString()) === -1) {
+                    uniqueArray.push(favorite.dishes[i]._id.toString());
+                }                
+            }
+            for (let i = 0; i<req.body.length; i++) {
+                if (uniqueArray.indexOf(req.body[i]._id) === -1) {
+                    uniqueArray.push(req.body[i]._id);
+                }                
+            }
+            
+            console.log(uniqueArray);
+
+            favorite.dishes = [];
+            for (let i = 0; i<uniqueArray.length; i++) {
+                favorite.dishes.push({"_id": uniqueArray[i]});
+            }
             return favorite.save();
         }
     })
@@ -47,22 +64,8 @@ favoriteRouter.route('/')
     .catch((err) => next(err));
 })
 .put(authenticate.verifyUser, (req, res, next) => {
-    // modify a list of favorite dishes for a user
-    Favorites.update({
-        user: req.user._id,
-        dishes: req.body
-    })
-    .then((resp) => {
-        Favorites.findOne({user: req.user._id})
-        .populate('user')
-        .populate('dishes')
-        .then((favorites) => {
-            res.statusCode = 200;
-            res.setHeader('Content-Type', 'application/json');
-            res.json(favorites);
-        }, (err) => next(err));
-    }, (err) => next(err))
-    .catch((err) => next(err));
+    res.statusCode = 403;
+    res.end('Not allowed');
 })
 .delete(authenticate.verifyUser, (req, res, next) => {
     // delete a list of favorite dishes for a user
